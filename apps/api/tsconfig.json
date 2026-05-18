@@ -6,10 +6,11 @@
     "target": "ES2022",
     "lib": ["ES2022"],
     "outDir": "dist",
-    "rootDir": "src",
     "types": ["node"],
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@tests/*": ["./tests/*"],
       "@nex/shared": ["../../packages/shared/src"]
     }
   },
