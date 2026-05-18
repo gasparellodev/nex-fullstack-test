@@ -3,6 +3,7 @@ import pino from 'pino';
 import { AuthenticateUser } from '@/application/auth/AuthenticateUser.js';
 import { RegisterUser } from '@/application/auth/RegisterUser.js';
 import { ImportSpreadsheet } from '@/application/transactions/ImportSpreadsheet.js';
+import { ListAdminTransactions } from '@/application/transactions/ListAdminTransactions.js';
 import { AesGcmCipher } from '@/infrastructure/crypto/AesGcmCipher.js';
 import { BcryptHasher } from '@/infrastructure/crypto/BcryptHasher.js';
 import { HmacIndex } from '@/infrastructure/crypto/HmacIndex.js';
@@ -16,6 +17,7 @@ import { InMemoryImportBatchRepository } from '@/infrastructure/repositories/InM
 import { InMemoryTransactionRepository } from '@/infrastructure/repositories/InMemoryTransactionRepository.js';
 import { InMemoryUserRepository } from '@/infrastructure/repositories/InMemoryUserRepository.js';
 import { AdminImportsController } from '@/presentation/controllers/AdminImportsController.js';
+import { AdminTransactionsController } from '@/presentation/controllers/AdminTransactionsController.js';
 import { AuthController } from '@/presentation/controllers/AuthController.js';
 import { MeController } from '@/presentation/controllers/MeController.js';
 import { SystemClock } from '@/shared/clock.js';
@@ -55,6 +57,11 @@ export function buildTestApp(opts: BuildTestAppOptions = {}): TestAppHandle {
 
   const register = new RegisterUser({ users, passwords, cpfCipher, cpfIndex, tokens, clock });
   const authenticate = new AuthenticateUser({ users, passwords, tokens });
+  const listAdminTransactions = new ListAdminTransactions({
+    transactions,
+    auditLogs,
+    cpfIndex,
+  });
   const importSpreadsheet = new ImportSpreadsheet({
     users,
     transactions,
@@ -70,6 +77,7 @@ export function buildTestApp(opts: BuildTestAppOptions = {}): TestAppHandle {
     authController: new AuthController(register, authenticate),
     meController: new MeController(users),
     adminImportsController: new AdminImportsController(importSpreadsheet),
+    adminTransactionsController: new AdminTransactionsController(listAdminTransactions),
     tokens,
     logger,
     corsOrigin: 'http://localhost:5173',
