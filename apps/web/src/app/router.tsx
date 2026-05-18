@@ -2,6 +2,7 @@ import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { LoginPage } from '@/features/auth/LoginPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { UploadPage } from '@/features/admin/upload/UploadPage';
+import { ReportPage } from '@/features/admin/report/ReportPage';
 import { AppLayout } from './Layout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { homeForRole, routes } from './routes';
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
             element: <ProtectedRoute roles={['admin']} />,
             children: [
               { path: routes.adminUpload, element: <UploadPage /> },
-              { path: routes.adminReport, element: <Placeholder title="Relatório" /> },
+              { path: routes.adminReport, element: <ReportPage /> },
             ],
           },
         ],
