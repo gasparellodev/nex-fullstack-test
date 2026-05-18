@@ -1,22 +1,26 @@
 import express, { type Express } from 'express';
 import { pinoHttp } from 'pino-http';
 import type { Logger } from 'pino';
+import type { AdminImportsController } from '@/presentation/controllers/AdminImportsController.js';
 import type { AuthController } from '@/presentation/controllers/AuthController.js';
 import type { MeController } from '@/presentation/controllers/MeController.js';
 import type { ITokenSigner } from '@/domain/ports/ITokenSigner.js';
 import { buildAuthMiddleware } from '@/infrastructure/http/middlewares/auth.js';
 import { buildErrorHandler } from '@/infrastructure/http/middlewares/errorHandler.js';
 import { buildRateLimiter } from '@/infrastructure/http/middlewares/rateLimit.js';
+import { requireRole } from '@/infrastructure/http/middlewares/role.js';
 import {
   buildCors,
   buildSecurityHeaders,
 } from '@/infrastructure/http/middlewares/securityHeaders.js';
+import { buildAdminRouter } from '@/presentation/routes/admin.routes.js';
 import { buildAuthRouter } from '@/presentation/routes/auth.routes.js';
 import { buildMeRouter } from '@/presentation/routes/me.routes.js';
 
 export interface BuildAppDeps {
   authController: AuthController;
   meController: MeController;
+  adminImportsController: AdminImportsController;
   tokens: ITokenSigner;
   logger: Logger;
   corsOrigin: string;
@@ -50,6 +54,10 @@ export function buildApp(deps: BuildAppDeps): Express {
 
   const authMiddleware = buildAuthMiddleware(deps.tokens);
   app.use('/api/me', buildMeRouter(deps.meController, authMiddleware));
+  app.use(
+    '/api/admin',
+    buildAdminRouter(deps.adminImportsController, authMiddleware, requireRole('admin')),
+  );
 
   app.use(buildErrorHandler(deps.logger));
   return app;
