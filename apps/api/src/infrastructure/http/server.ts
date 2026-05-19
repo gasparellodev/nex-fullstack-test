@@ -2,6 +2,7 @@ import express, { type Express } from 'express';
 import { pinoHttp } from 'pino-http';
 import type { Logger } from 'pino';
 import type { AdminImportsController } from '@/presentation/controllers/AdminImportsController.js';
+import type { AdminTransactionsController } from '@/presentation/controllers/AdminTransactionsController.js';
 import type { AuthController } from '@/presentation/controllers/AuthController.js';
 import type { MeController } from '@/presentation/controllers/MeController.js';
 import type { ITokenSigner } from '@/domain/ports/ITokenSigner.js';
@@ -21,6 +22,7 @@ export interface BuildAppDeps {
   authController: AuthController;
   meController: MeController;
   adminImportsController: AdminImportsController;
+  adminTransactionsController: AdminTransactionsController;
   tokens: ITokenSigner;
   logger: Logger;
   corsOrigin: string;
@@ -56,7 +58,14 @@ export function buildApp(deps: BuildAppDeps): Express {
   app.use('/api/me', buildMeRouter(deps.meController, authMiddleware));
   app.use(
     '/api/admin',
-    buildAdminRouter(deps.adminImportsController, authMiddleware, requireRole('admin')),
+    buildAdminRouter(
+      {
+        imports: deps.adminImportsController,
+        transactions: deps.adminTransactionsController,
+      },
+      authMiddleware,
+      requireRole('admin'),
+    ),
   );
 
   app.use(buildErrorHandler(deps.logger));
