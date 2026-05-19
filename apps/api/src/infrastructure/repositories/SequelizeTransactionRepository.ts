@@ -22,12 +22,24 @@ function txFromUow(uow?: UnitOfWork): SequelizeTransaction | undefined {
   return (uow as { transaction?: SequelizeTransaction } | undefined)?.transaction;
 }
 
-function toEntity(model: TransactionModel): Transaction {
+/**
+ * Sequelize returns DATEONLY columns as 'YYYY-MM-DD' strings; the domain
+ * entity contract is a Date. Parse here so use cases never see a string.
+ * Exported (not just module-local) so the regression test can exercise
+ * the conversion without standing up a real database.
+ */
+export function transactionModelToEntity(model: TransactionModel): Transaction {
+  const rawDate = model.occurredAt as unknown;
+  const occurredAt =
+    rawDate instanceof Date
+      ? rawDate
+      : new Date(`${String(rawDate)}T00:00:00.000Z`);
+
   return new Transaction({
     id: model.id,
     userId: model.userId,
     description: model.description,
-    occurredAt: model.occurredAt as Date,
+    occurredAt,
     points: Number(model.points),
     amountCents: Number(model.amountCents),
     status: model.status,
@@ -73,7 +85,7 @@ export class SequelizeTransactionRepository implements ITransactionRepository {
       limit: filters.pageSize,
       order: [['occurredAt', 'DESC']],
     });
-    return { data: rows.map(toEntity), total: count };
+    return { data: rows.map(transactionModelToEntity), total: count };
   }
 
   async listForAdmin(
@@ -105,7 +117,7 @@ export class SequelizeTransactionRepository implements ITransactionRepository {
 
     return {
       data: rows.map((row) =>
-        Object.assign(toEntity(row), { userCpfMasked: '***.***.***-**' }),
+        Object.assign(transactionModelToEntity(row), { userCpfMasked: '***.***.***-**' }),
       ),
       total: count,
     };
