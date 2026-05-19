@@ -1,0 +1,10 @@
+'use strict';
+
+const path = require('node:path');
+
+module.exports = {
+  config: path.resolve('src', 'infrastructure', 'db', 'config.cjs'),
+  'migrations-path': path.resolve('src', 'infrastructure', 'db', 'migrations'),
+  'seeders-path': path.resolve('src', 'infrastructure', 'db', 'seeders'),
+  'models-path': path.resolve('src', 'infrastructure', 'db', 'models'),
+};
