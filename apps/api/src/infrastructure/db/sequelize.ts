@@ -1,5 +1,8 @@
 import 'reflect-metadata';
 import { Sequelize } from 'sequelize-typescript';
+import { AuditLogModel } from '@/infrastructure/db/models/AuditLogModel.js';
+import { ImportBatchModel } from '@/infrastructure/db/models/ImportBatchModel.js';
+import { TransactionModel } from '@/infrastructure/db/models/TransactionModel.js';
 import { UserModel } from '@/infrastructure/db/models/UserModel.js';
 
 export interface SequelizeOptions {
@@ -21,6 +24,6 @@ export function createSequelize(opts: SequelizeOptions): Sequelize {
     password: opts.password,
     logging: opts.logging ?? false,
     define: { underscored: true, timestamps: true, freezeTableName: false },
-    models: [UserModel],
+    models: [UserModel, TransactionModel, ImportBatchModel, AuditLogModel],
   });
 }
