@@ -3,6 +3,8 @@ import { LoginPage } from '@/features/auth/LoginPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { UploadPage } from '@/features/admin/upload/UploadPage';
 import { ReportPage } from '@/features/admin/report/ReportPage';
+import { ExtractPage } from '@/features/extract/ExtractPage';
+import { WalletPage } from '@/features/wallet/WalletPage';
 import { AppLayout } from './Layout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { homeForRole, routes } from './routes';
@@ -38,8 +40,8 @@ const router = createBrowserRouter([
           {
             element: <ProtectedRoute roles={['user']} />,
             children: [
-              { path: routes.extract, element: <Placeholder title="Extrato" /> },
-              { path: routes.wallet, element: <Placeholder title="Carteira" /> },
+              { path: routes.extract, element: <ExtractPage /> },
+              { path: routes.wallet, element: <WalletPage /> },
               { path: routes.account, element: <Placeholder title="Minha conta" /> },
             ],
           },
