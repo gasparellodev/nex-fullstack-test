@@ -5,6 +5,7 @@ import { UploadPage } from '@/features/admin/upload/UploadPage';
 import { ReportPage } from '@/features/admin/report/ReportPage';
 import { ExtractPage } from '@/features/extract/ExtractPage';
 import { WalletPage } from '@/features/wallet/WalletPage';
+import { AccountPage } from '@/features/account/AccountPage';
 import { AppLayout } from './Layout';
 import { ProtectedRoute } from './ProtectedRoute';
 import { homeForRole, routes } from './routes';
@@ -14,17 +15,6 @@ function HomeRedirect(): JSX.Element {
   const user = useAuthStore((s) => s.user);
   if (!user) return <Navigate to={routes.login} replace />;
   return <Navigate to={homeForRole(user.role)} replace />;
-}
-
-function Placeholder({ title }: { title: string }): JSX.Element {
-  return (
-    <section className="space-y-2">
-      <h1 className="text-2xl font-semibold">{title}</h1>
-      <p className="text-muted-foreground">
-        Em breve — esta página será entregue em um PR seguinte.
-      </p>
-    </section>
-  );
 }
 
 const router = createBrowserRouter([
@@ -42,7 +32,7 @@ const router = createBrowserRouter([
             children: [
               { path: routes.extract, element: <ExtractPage /> },
               { path: routes.wallet, element: <WalletPage /> },
-              { path: routes.account, element: <Placeholder title="Minha conta" /> },
+              { path: routes.account, element: <AccountPage /> },
             ],
           },
           {

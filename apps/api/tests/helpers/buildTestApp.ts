@@ -6,6 +6,8 @@ import { ImportSpreadsheet } from '@/application/transactions/ImportSpreadsheet.
 import { ListAdminTransactions } from '@/application/transactions/ListAdminTransactions.js';
 import { ListUserTransactions } from '@/application/transactions/ListUserTransactions.js';
 import { GetWalletBalance } from '@/application/transactions/GetWalletBalance.js';
+import { DeleteUserAccount } from '@/application/lgpd/DeleteUserAccount.js';
+import { ExportUserData } from '@/application/lgpd/ExportUserData.js';
 import { AesGcmCipher } from '@/infrastructure/crypto/AesGcmCipher.js';
 import { BcryptHasher } from '@/infrastructure/crypto/BcryptHasher.js';
 import { HmacIndex } from '@/infrastructure/crypto/HmacIndex.js';
@@ -20,6 +22,7 @@ import { InMemoryTransactionRepository } from '@/infrastructure/repositories/InM
 import { InMemoryUserRepository } from '@/infrastructure/repositories/InMemoryUserRepository.js';
 import { AdminImportsController } from '@/presentation/controllers/AdminImportsController.js';
 import { AdminTransactionsController } from '@/presentation/controllers/AdminTransactionsController.js';
+import { LgpdController } from '@/presentation/controllers/LgpdController.js';
 import { AuthController } from '@/presentation/controllers/AuthController.js';
 import { MeController } from '@/presentation/controllers/MeController.js';
 import { SystemClock } from '@/shared/clock.js';
@@ -66,6 +69,8 @@ export function buildTestApp(opts: BuildTestAppOptions = {}): TestAppHandle {
   });
   const listUserTransactions = new ListUserTransactions(transactions);
   const getWalletBalance = new GetWalletBalance(transactions);
+  const exportUserData = new ExportUserData({ users, transactions, auditLogs, cpfCipher });
+  const deleteUserAccount = new DeleteUserAccount({ users, auditLogs });
   const importSpreadsheet = new ImportSpreadsheet({
     users,
     transactions,
@@ -80,6 +85,7 @@ export function buildTestApp(opts: BuildTestAppOptions = {}): TestAppHandle {
   const app = buildApp({
     authController: new AuthController(register, authenticate),
     meController: new MeController(users, listUserTransactions, getWalletBalance),
+    lgpdController: new LgpdController(exportUserData, deleteUserAccount),
     adminImportsController: new AdminImportsController(importSpreadsheet),
     adminTransactionsController: new AdminTransactionsController(listAdminTransactions),
     tokens,
