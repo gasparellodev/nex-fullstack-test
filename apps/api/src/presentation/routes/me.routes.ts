@@ -5,5 +5,7 @@ export function buildMeRouter(controller: MeController, authMiddleware: RequestH
   const router = Router();
   router.use(authMiddleware);
   router.get('/', controller.show);
+  router.get('/transactions', controller.transactions);
+  router.get('/wallet', controller.wallet);
   return router;
 }

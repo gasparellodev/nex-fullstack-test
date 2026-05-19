@@ -4,6 +4,8 @@ import { AuthenticateUser } from '@/application/auth/AuthenticateUser.js';
 import { RegisterUser } from '@/application/auth/RegisterUser.js';
 import { ImportSpreadsheet } from '@/application/transactions/ImportSpreadsheet.js';
 import { ListAdminTransactions } from '@/application/transactions/ListAdminTransactions.js';
+import { ListUserTransactions } from '@/application/transactions/ListUserTransactions.js';
+import { GetWalletBalance } from '@/application/transactions/GetWalletBalance.js';
 import { AesGcmCipher } from '@/infrastructure/crypto/AesGcmCipher.js';
 import { BcryptHasher } from '@/infrastructure/crypto/BcryptHasher.js';
 import { HmacIndex } from '@/infrastructure/crypto/HmacIndex.js';
@@ -60,6 +62,8 @@ async function bootstrap(): Promise<void> {
     auditLogs,
     cpfIndex,
   });
+  const listUserTransactions = new ListUserTransactions(transactions);
+  const getWalletBalance = new GetWalletBalance(transactions);
   const importSpreadsheet = new ImportSpreadsheet({
     users,
     transactions,
@@ -74,7 +78,7 @@ async function bootstrap(): Promise<void> {
 
   const app = buildApp({
     authController: new AuthController(registerUser, authenticateUser),
-    meController: new MeController(users),
+    meController: new MeController(users, listUserTransactions, getWalletBalance),
     adminImportsController: new AdminImportsController(importSpreadsheet),
     adminTransactionsController: new AdminTransactionsController(listAdminTransactions),
     tokens,
