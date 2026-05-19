@@ -48,6 +48,8 @@ When the stack is healthy you'll have:
 | Web (Vite dev server) | http://localhost:5173 |
 | API | http://localhost:3000 |
 | API health probe | http://localhost:3000/health |
+| **Swagger UI** | http://localhost:3000/api/docs |
+| OpenAPI JSON | http://localhost:3000/api/docs/openapi.json |
 | Adminer (DB inspector) | http://localhost:8080 — server `mysql`, user/password from `.env` |
 | MySQL (direct) | localhost:3306 |
 
@@ -113,6 +115,11 @@ docs/
 - Admin spreadsheet uploads are **idempotent on `sha256(file)`** — retrying the same file returns the previous batch with `importedRows = 0`.
 
 ## API surface
+
+Live, browsable contract at **http://localhost:3000/api/docs** (Swagger UI). The
+raw OpenAPI 3.0 document lives at
+[`apps/api/src/presentation/docs/openapi.ts`](./apps/api/src/presentation/docs/openapi.ts)
+and is served as JSON at `/api/docs/openapi.json`.
 
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |

@@ -39,3 +39,6 @@ All notable changes to this project are documented here, following
 - **Docs** — ADRs (stack, LGPD, hexagonal); Mermaid diagrams (C4
   container, ER, sequence); per-feature specs under `docs/specs/`; sample
   spreadsheet (`docs/sample-import.csv`).
+- **Swagger UI** — interactive API documentation served at
+  `/api/docs` (raw OpenAPI 3 JSON at `/api/docs/openapi.json`).
+  Adminer container ships on `8081` to free port `8080` on the host.

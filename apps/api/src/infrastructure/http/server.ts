@@ -1,5 +1,7 @@
 import express, { type Express } from 'express';
 import { pinoHttp } from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
+import { openapi } from '@/presentation/docs/openapi.js';
 import type { Logger } from 'pino';
 import type { AdminImportsController } from '@/presentation/controllers/AdminImportsController.js';
 import type { AdminTransactionsController } from '@/presentation/controllers/AdminTransactionsController.js';
@@ -48,6 +50,19 @@ export function buildApp(deps: BuildAppDeps): Express {
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', service: 'nex-api' });
   });
+
+  // OpenAPI document + Swagger UI.
+  app.get('/api/docs/openapi.json', (_req, res) => {
+    res.json(openapi);
+  });
+  app.use(
+    '/api/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(openapi, {
+      customSiteTitle: 'Nex Digital API — docs',
+      swaggerOptions: { persistAuthorization: true },
+    }),
+  );
 
   // Auth routes share a tighter rate limit
   const authRouter = buildAuthRouter(
