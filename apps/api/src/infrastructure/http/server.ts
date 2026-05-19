@@ -4,6 +4,7 @@ import type { Logger } from 'pino';
 import type { AdminImportsController } from '@/presentation/controllers/AdminImportsController.js';
 import type { AdminTransactionsController } from '@/presentation/controllers/AdminTransactionsController.js';
 import type { AuthController } from '@/presentation/controllers/AuthController.js';
+import type { LgpdController } from '@/presentation/controllers/LgpdController.js';
 import type { MeController } from '@/presentation/controllers/MeController.js';
 import type { ITokenSigner } from '@/domain/ports/ITokenSigner.js';
 import { buildAuthMiddleware } from '@/infrastructure/http/middlewares/auth.js';
@@ -21,6 +22,7 @@ import { buildMeRouter } from '@/presentation/routes/me.routes.js';
 export interface BuildAppDeps {
   authController: AuthController;
   meController: MeController;
+  lgpdController: LgpdController;
   adminImportsController: AdminImportsController;
   adminTransactionsController: AdminTransactionsController;
   tokens: ITokenSigner;
@@ -55,7 +57,10 @@ export function buildApp(deps: BuildAppDeps): Express {
   app.use('/api/auth', authRouter);
 
   const authMiddleware = buildAuthMiddleware(deps.tokens);
-  app.use('/api/me', buildMeRouter(deps.meController, authMiddleware));
+  app.use(
+    '/api/me',
+    buildMeRouter({ me: deps.meController, lgpd: deps.lgpdController }, authMiddleware),
+  );
   app.use(
     '/api/admin',
     buildAdminRouter(
